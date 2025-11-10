@@ -1,0 +1,16 @@
+<div class="card mb-3">
+  <div class="card-header">
+    <h5>Add Image from URL</h5>
+  </div>
+  <div class="card-body">
+    <%= form_tag create_from_url_admin_product_images_path(@product), method: :post, class: 'form-inline' do %>
+      <div class="form-group mr-2">
+        <%= text_field_tag :image_url, nil, placeholder: 'Enter image URL', class: 'form-control', style: 'width: 400px;' %>
+      </div>
+      <%= submit_tag 'Add from URL', class: 'btn btn-primary' %>
+    <% end %>
+    <small class="form-text text-muted mt-2">
+      Example: https://example.com/image.jpg
+    </small>
+  </div>
+</div>
