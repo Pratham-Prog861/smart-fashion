@@ -1,81 +1,176 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
-import Image from 'next/image'
-import { ShoppingCart, Heart, Share2, Box } from 'lucide-react'
-import { ARViewer } from '@/components/ARViewer'
-import { ProductCard } from '@/components/ProductCard'
-import { useCartStore } from '@/store/cartStore'
-import { getRecommendations } from '@/utils/recommendations'
-import type { Product } from '@/types'
+import { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { ShoppingCart, Heart, Share2, Box } from "lucide-react";
+import { ARViewer } from "@/components/ARViewer";
+import { ProductCard } from "@/components/ProductCard";
+import { useCartStore } from "@/store/cartStore";
+import { getRecommendations } from "@/utils/recommendations";
+import type { Product } from "@/types";
 
 export default function ProductDetailPage() {
-  const params = useParams()
-  const searchParams = useSearchParams()
-  const showAR = searchParams.get('ar') === 'true'
-  
-  const [product, setProduct] = useState<Product | null>(null)
-  const [recommendations, setRecommendations] = useState<Product[]>([])
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [quantity, setQuantity] = useState(1)
-  const addItem = useCartStore((state) => state.addItem)
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const showAR = searchParams.get("ar") === "true";
+
+  const [product, setProduct] = useState<Product | null>(null);
+  const [recommendations, setRecommendations] = useState<Product[]>([]);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
     // Mock data - replace with actual Spree API call
-    const mockProduct: Product = {
-      id: params.id as string,
-      name: 'Classic White Shirt',
-      category: 'Shirts',
-      price: 49.99,
-      originalPrice: 69.99,
-      image: '/placeholder-shirt.svg',
-      images: [
-        '/placeholder-shirt.svg',
-        '/placeholder-shirt.svg',
-        '/placeholder-shirt.svg',
-      ],
-      description: 'Premium cotton shirt with a classic fit. Perfect for both casual and formal occasions.',
-      isNew: true,
-      arModel: 'shirt-white.glb', // Loads from backend: http://localhost:3001/models/shirt-white.glb
-      colors: ['White', 'Black', 'Blue'],
-      sizes: ['S', 'M', 'L', 'XL'],
-    }
+    const mockProducts: Record<string, Product> = {
+      "1": {
+        id: "1",
+        name: "Premium White Cotton Shirt",
+        category: "Shirts",
+        price: 49.99,
+        originalPrice: 69.99,
+        image: "/placeholder-shirt.svg",
+        images: [
+          "/placeholder-shirt.svg",
+          "/placeholder-shirt.svg",
+          "/placeholder-shirt.svg",
+        ],
+        description:
+          "Luxurious white cotton shirt with a classic fit. Features premium fabric and timeless design perfect for both casual and formal occasions.",
+        isNew: true,
+        arModel: "shirt-white.glb",
+        colors: ["White", "Light Blue", "Pink"],
+        sizes: ["S", "M", "L", "XL"],
+      },
+      "2": {
+        id: "2",
+        name: "Wrangler Black Slim Fit Jeans",
+        category: "Jeans",
+        price: 79.99,
+        originalPrice: 99.99,
+        image: "/placeholder-jeans.svg",
+        images: [
+          "/placeholder-jeans.svg",
+          "/placeholder-jeans.svg",
+          "/placeholder-jeans.svg",
+        ],
+        description:
+          "Premium black denim jeans with a modern slim fit. Crafted for comfort and style, perfect for everyday wear.",
+        isNew: false,
+        arModel: "wrangler_jeans_black_slim_fit.glb",
+        colors: ["Black", "Dark Blue", "Grey"],
+        sizes: ["28", "30", "32", "34", "36"],
+      },
+      "3": {
+        id: "3",
+        name: "Classic Aviator Sunglasses",
+        category: "Goggles",
+        price: 129.99,
+        originalPrice: 159.99,
+        image: "/placeholder-sunglasses.svg",
+        images: [
+          "/placeholder-sunglasses.svg",
+          "/placeholder-sunglasses.svg",
+          "/placeholder-sunglasses.svg",
+        ],
+        description:
+          "Timeless aviator sunglasses with UV protection. Features metal frame and premium lenses for superior clarity and style.",
+        isNew: true,
+        arModel: "aviator_sunglasses.glb",
+        colors: ["Gold", "Silver", "Black"],
+        sizes: ["One Size"],
+      },
+      "4": {
+        id: "4",
+        name: "Camouflage Pattern Polo Shirt",
+        category: "Shirts",
+        price: 54.99,
+        originalPrice: 74.99,
+        image: "/placeholder-polo.svg",
+        images: [
+          "/placeholder-polo.svg",
+          "/placeholder-polo.svg",
+          "/placeholder-polo.svg",
+        ],
+        description:
+          "Stylish polo shirt with modern camouflage pattern. Made from breathable cotton blend, ideal for casual outdoor activities.",
+        isNew: false,
+        arModel: "polo_shirt_camouflage_pattern.glb",
+        colors: ["Camo Green", "Camo Brown", "Camo Grey"],
+        sizes: ["S", "M", "L", "XL", "XXL"],
+      },
+      "5": {
+        id: "5",
+        name: "Black Collar T-shirt",
+        category: "T-shirts",
+        price: 35.99,
+        originalPrice: 45.99,
+        image: "/placeholder-polo.svg",
+        images: [
+          "/placeholder-polo.svg",
+          "/placeholder-polo.svg",
+          "/placeholder-polo.svg",
+        ],
+        description:
+          "Comfortable black collar t-shirt made from breathable premium cotton. Perfect for smart-casual wear with a modern fit.",
+        isNew: false,
+        arModel: "tshirt-black.glb",
+        colors: ["Black", "Grey", "Navy"],
+        sizes: ["S", "M", "L", "XL", "XXL"],
+      },
+    };
+
+    const currentProduct =
+      mockProducts[params.id as string] || mockProducts["1"];
 
     const mockRecommendations: Product[] = [
       {
-        id: '2',
-        name: 'Blue Denim Jeans',
-        category: 'Jeans',
+        id: "2",
+        name: "Wrangler Black Slim Fit Jeans",
+        category: "Jeans",
         price: 79.99,
-        image: '/placeholder-jeans.svg',
+        originalPrice: 99.99,
+        image: "/placeholder-jeans.svg",
+        arModel: "wrangler_jeans_black_slim_fit.glb",
       },
       {
-        id: '3',
-        name: 'Aviator Sunglasses',
-        category: 'Goggles',
-        price: 129.99,
-        image: '/placeholder-sunglasses.svg',
+        id: "4",
+        name: "Camouflage Pattern Polo Shirt",
+        category: "Shirts",
+        price: 54.99,
+        originalPrice: 74.99,
+        image: "/placeholder-polo.svg",
+        arModel: "polo_shirt_camouflage_pattern.glb",
       },
-    ]
+      {
+        id: "5",
+        name: "Black Collar T-shirt",
+        category: "T-shirts",
+        price: 35.99,
+        originalPrice: 45.99,
+        image: "/placeholder-polo.svg",
+        arModel: "tshirt-black.glb",
+      },
+    ];
 
-    setProduct(mockProduct)
-    setRecommendations(mockRecommendations)
-  }, [params.id])
+    setProduct(currentProduct);
+    setRecommendations(mockRecommendations);
+  }, [params.id]);
 
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
-    )
+    );
   }
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
-      addItem(product)
+      addItem(product);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -93,7 +188,7 @@ export default function ProductDetailPage() {
               <div className="space-y-4">
                 <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
                   <Image
-                    src={product.images?.[selectedImage] || product.image || ''}
+                    src={product.images?.[selectedImage] || product.image || ""}
                     alt={product.name}
                     width={800}
                     height={800}
@@ -108,8 +203,8 @@ export default function ProductDetailPage() {
                         onClick={() => setSelectedImage(idx)}
                         className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${
                           selectedImage === idx
-                            ? 'border-primary-600'
-                            : 'border-transparent'
+                            ? "border-primary-600"
+                            : "border-transparent"
                         }`}
                       >
                         <Image
@@ -134,9 +229,11 @@ export default function ProductDetailPage() {
                 New Arrival
               </span>
             )}
-            
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">{product.name}</h1>
-            
+
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              {product.name}
+            </h1>
+
             <div className="flex items-center gap-4 mb-6">
               <span className="text-3xl font-bold text-primary-600">
                 ${product.price}
@@ -162,7 +259,9 @@ export default function ProductDetailPage() {
                 >
                   -
                 </button>
-                <span className="text-xl font-semibold w-12 text-center">{quantity}</span>
+                <span className="text-xl font-semibold w-12 text-center">
+                  {quantity}
+                </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
                   className="w-10 h-10 rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -214,5 +313,5 @@ export default function ProductDetailPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
